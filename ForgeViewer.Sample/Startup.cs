@@ -33,6 +33,7 @@ namespace ForgeViewer.Sample
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddScoped<ViewerViewModel>();
+            services.AddHttpClient();
             services.AddForgeViewer();
         }
 
