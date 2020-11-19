@@ -7,16 +7,18 @@
     <e p="C:\Users\T.GALLAND\AppData\Roaming\JetBrains\Rider2020.3\extensions" t="IncludeRecursive" />
     <e p="C:\Users\T.GALLAND\AppData\Roaming\JetBrains\Rider2020.3\scratches" t="IncludeRecursive" />
     <e p="C:\Users\T.GALLAND\source\repos\Mixed\ForgeViewer.NET" t="IncludeFlat">
-      <e p="ForegeViewer.Net" t="IncludeRecursive">
+      <e p="ForgeViewer.NET" t="IncludeRecursive">
+        <e p="_Imports.razor" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="ForegeViewer.Net.csproj" t="IncludeRecursive" />
+        <e p="ForgeViewer.NET.csproj" t="IncludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="net5.0" t="Include">
-              <e p="ForegeViewer.Net.AssemblyInfo.cs" t="Include" />
+              <e p="ForgeViewer.NET.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
+        <e p="Viewing.cs" t="Include" />
         <e p="wwwroot" t="Include">
           <e p="ForgeViewer.js" t="Include" />
         </e>
@@ -43,11 +45,10 @@
         </e>
         <e p="Pages" t="Include">
           <e p="_Host.cshtml" t="Include" />
-          <e p="Counter.razor" t="Include" />
           <e p="Error.cshtml" t="Include" />
           <e p="Error.cshtml.cs" t="Include" />
-          <e p="FetchData.razor" t="Include" />
           <e p="Index.razor" t="Include" />
+          <e p="Viewer.razor" t="Include" />
         </e>
         <e p="Program.cs" t="Include" />
         <e p="Properties" t="Include">
@@ -61,6 +62,9 @@
           <e p="SurveyPrompt.razor" t="Include" />
         </e>
         <e p="Startup.cs" t="Include" />
+        <e p="ViewModels" t="Include">
+          <e p="ViewerViewModel.cs" t="Include" />
+        </e>
         <e p="wwwroot" t="Include">
           <e p="css" t="Include">
             <e p="bootstrap" t="Include">

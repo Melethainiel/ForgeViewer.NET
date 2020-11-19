@@ -1,0 +1,26 @@
+﻿@page "/Viewer"
+@using ForgeViewer.Sample.ViewModels
+@using ForegeViewer.Net
+@inject ViewerViewModel ViewModel
+@inject IServiceProvider ServiceProvider
+
+<h3>Viewer</h3>
+<div class="container-fluid d-flex h-100">
+    <div class="flex-fill" style="height: calc(100%);">
+        <div id="demo"
+             style="position: relative; height: calc(100% - 0px); width: calc(100% - 0px);">
+        </div>
+    </div>
+</div>
+@code {
+
+    private Viewing Viewing { get; set; }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Viewing = Viewing.Create(ServiceProvider);
+        await Viewing.Initializer(null);
+    }
+
+
+}
