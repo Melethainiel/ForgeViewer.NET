@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ForgeViewer.NET;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ForgeViewer.Sample.Data;
+using ForgeViewer.Sample.ViewModels;
+using Microsoft.JSInterop;
 
 namespace ForgeViewer.Sample
 {
@@ -29,10 +32,12 @@ namespace ForgeViewer.Sample
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            services.AddScoped<ViewerViewModel>();
+            services.AddForgeViewer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IJSRuntime jsRuntime)
         {
             if (env.IsDevelopment())
             {
