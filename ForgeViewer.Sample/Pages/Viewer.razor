@@ -1,8 +1,9 @@
 ﻿@page "/Viewer"
 @using ForgeViewer.Sample.ViewModels
-@using ForegeViewer.Net
+@using ForgeViewer.NET
+@using ForgeViewer.NET.Models
 @inject ViewerViewModel ViewModel
-@inject IServiceProvider ServiceProvider
+@inject Viewing Viewing
 
 <h3>Viewer</h3>
 <div class="container-fluid d-flex h-100">
@@ -12,14 +13,13 @@
         </div>
     </div>
 </div>
+
 @code {
 
-    private Viewing Viewing { get; set; }
-    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Viewing = Viewing.Create(ServiceProvider);
-        await Viewing.Initializer(null);
+        var opt = new Options {GetAccessToken = async () => await Task.FromResult("ok")};
+        await Viewing.Initializer(opt);
     }
 
 

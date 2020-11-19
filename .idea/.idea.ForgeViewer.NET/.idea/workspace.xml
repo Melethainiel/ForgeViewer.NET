@@ -6,20 +6,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="21543ff4-eac8-4348-91e3-155f376ce91b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/ForegeViewer.Net.OLD/ForegeViewer.Net.OLD.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ForgeViewer.NET/Viewing.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ForgeViewer.Sample/Pages/Viewer.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ForgeViewer.Sample/ViewModels/ViewerViewModel.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ForgeViewer.NET/InstallServices.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ForgeViewer.NET/Misc/DictionaryExtensions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ForgeViewer.NET/Models/Options.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ForgeViewer.NET/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ForgeViewer.NET/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ForgeViewer.NET/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ForgeViewer.NET/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ForegeViewer.Net/ForegeViewer.Net.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ForegeViewer.Net/wwwroot/ForgeViewer.js" beforeDir="false" afterPath="$PROJECT_DIR$/ForgeViewer.NET/wwwroot/ForgeViewer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ForgeViewer.NET.sln" beforeDir="false" afterPath="$PROJECT_DIR$/ForgeViewer.NET.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ForgeViewer.NET/ForgeViewer.NET.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ForgeViewer.NET/ForgeViewer.NET.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ForgeViewer.NET/Viewing.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ForgeViewer.NET/Viewing.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ForgeViewer.NET/wwwroot/ForgeViewer.js" beforeDir="false" afterPath="$PROJECT_DIR$/ForgeViewer.NET/wwwroot/ForgeViewer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ForgeViewer.Sample/ForgeViewer.Sample.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ForgeViewer.Sample/ForgeViewer.Sample.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ForgeViewer.Sample/Pages/Counter.razor" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ForgeViewer.Sample/Pages/FetchData.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ForgeViewer.Sample/Pages/Viewer.razor" beforeDir="false" afterPath="$PROJECT_DIR$/ForgeViewer.Sample/Pages/Viewer.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ForgeViewer.Sample/Pages/_Host.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/ForgeViewer.Sample/Pages/_Host.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ForgeViewer.Sample/Shared/NavMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/ForgeViewer.Sample/Shared/NavMenu.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ForgeViewer.Sample/Startup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ForgeViewer.Sample/Startup.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -35,24 +32,37 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock://C:/Users/T.GALLAND/source/repos/Mixed/ForgeViewer.NET/ForgeViewer.Sample/Pages/_Host.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/F3DD31A3-D437-4D7D-9525-D887480DAE95/29/8833b853/Func`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ForgeViewer.NET/Viewing.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <changedPaths>
       <option value="$PROJECT_DIR$/ForegeViewer.Net/Class1.cs" />
-      <option value="$PROJECT_DIR$/ForgeViewer.Sample/Pages/_Host.cshtml" />
       <option value="$PROJECT_DIR$/ForegeViewer.Net/wwwroot/ForgeViewer.js" />
       <option value="$PROJECT_DIR$/ForgeViewer.Sample/Pages/Viewer.cshtml" />
       <option value="$PROJECT_DIR$/ForgeViewer.Sample/ViewModels/ViewerViewModel.cs" />
       <option value="$PROJECT_DIR$/ForegeViewer.Net/Viewing.cs" />
       <option value="$PROJECT_DIR$/ForgeViewer.Sample/Shared/NavMenu.razor" />
-      <option value="$PROJECT_DIR$/ForgeViewer.Sample/Pages/Viewer.razor" />
-      <option value="$PROJECT_DIR$/ForgeViewer.Sample/Startup.cs" />
       <option value="$PROJECT_DIR$/ForegeViewer.Net/ForegeViewer.Net.csproj" />
       <option value="$PROJECT_DIR$/RazorClassLibrary/ExampleJsInterop.cs" />
+      <option value="$PROJECT_DIR$/ForgeViewer.Sample/ForgeViewer.Sample.csproj" />
+      <option value="$PROJECT_DIR$/ForgeViewer.Sample/Pages/_Host.cshtml" />
+      <option value="$PROJECT_DIR$/ForgeViewer.NET/Models/InitializerOptions.cs" />
+      <option value="$PROJECT_DIR$/ForgeViewer.NET/InstallServices.cs" />
+      <option value="$PROJECT_DIR$/ForgeViewer.Sample/Startup.cs" />
+      <option value="$PROJECT_DIR$/ForgeViewer.NET/Misc/DictionnaryExtensions.cs" />
+      <option value="$PROJECT_DIR$/ForgeViewer.NET/wwwroot/ForgeViewer.js" />
+      <option value="$PROJECT_DIR$/ForgeViewer.Sample/Pages/Viewer.razor" />
+      <option value="$PROJECT_DIR$/ForgeViewer.NET/Models/Options.cs" />
       <option value="$PROJECT_DIR$/ForgeViewer.NET/Viewing.cs" />
     </changedPaths>
   </component>

@@ -5,7 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ForegeViewer.Net.OLD\ForegeViewer.Net.OLD.csproj" />
       <ProjectReference Include="..\ForgeViewer.NET\ForgeViewer.NET.csproj" />
     </ItemGroup>
 
