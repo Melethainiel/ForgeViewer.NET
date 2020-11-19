@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.JSInterop;
 
 namespace ForgeViewer.NET.Models
 {
     public class Options
     {
-        private Func<Task<string>>? _getAccessToken;
-        private string? _getAccessTokenId;
-
         public Options()
         {
             Env = "AutodeskProduction";
@@ -27,21 +25,9 @@ namespace ForgeViewer.NET.Models
         public string Language { get; set; }
 
         [JsonIgnore]
-        public Func<Task<string>>? GetAccessToken
-        {
-            get => _getAccessToken;
-            set
-            {
-                _getAccessToken = value;
-                GetAccessTokenId = Guid.NewGuid().ToString();
-            }
-        }
+        public Func<Task<string>>? GetAccessToken { get; set; }
 
         [JsonPropertyName("getAccessToken")]
-        public string GetAccessTokenId
-        {
-            get => _getAccessTokenId ?? throw new Exception();
-            private set => _getAccessTokenId = value;
-        }
+        public bool IsGetAccessToken => GetAccessToken is not null;
     }
 }

@@ -2,12 +2,15 @@
 @using ForgeViewer.Sample.ViewModels
 @using ForgeViewer.NET
 @using ForgeViewer.NET.Models
+@using System.Net.Http.Json
+@using ForgeViewer.Sample.Data
 @inject ViewerViewModel ViewModel
-@inject Viewing Viewing
-
+@inject IServiceProvider ServiceProvider
+@inject IHttpClientFactory Factory
 <h3>Viewer</h3>
+
 <div class="container-fluid d-flex h-100">
-    <div class="flex-fill" style="height: calc(100%);">
+    <div class="flex-fill">
         <div id="demo"
              style="position: relative; height: calc(100% - 0px); width: calc(100% - 0px);">
         </div>
@@ -16,11 +19,36 @@
 
 @code {
 
+    private GuiViewer3d GuiViewer3d { get; set; }
+    private Viewing Viewing { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var opt = new Options {GetAccessToken = async () => await Task.FromResult("ok")};
+        Viewing = Viewing.Create(ServiceProvider);
+        var opt = await GetOptions();
         await Viewing.Initializer(opt);
+
+        GuiViewer3d = GuiViewer3d.Create(ServiceProvider);
+        await GuiViewer3d.Initializer("demo");
+        await GuiViewer3d.Start();
+
+        var urn = "urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cGJpLXZpZXdlci9NYXF1ZXR0ZSUyMEdPRSUyMHYwNGQuaWZj";
+        var document = await Document.Load(ServiceProvider, urn);
+        var getDefaultGeometry = await (await document.GetRoot()).GetDefaultGeometry();
+        await GuiViewer3d.LoadDocumentNode(document, getDefaultGeometry);
     }
 
+    private async Task<Options> GetOptions()
+    {
+        var client = Factory.CreateClient("auth");
+        var resp = await client.GetAsync("https://ifcdb.azurewebsites.net/Forge");
+        var respAsObj = await resp.Content.ReadFromJsonAsync<Auth>();
+        var token = respAsObj?.AccessToken ?? throw new Exception("Can't get access token");
+        var options = new Options
+        {
+            AccessToken = token
+        };
+        return options;
+    }
 
 }

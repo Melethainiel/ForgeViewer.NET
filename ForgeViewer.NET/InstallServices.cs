@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 
 namespace ForgeViewer.NET
 {
@@ -6,8 +7,6 @@ namespace ForgeViewer.NET
     {
         public static IServiceCollection AddForgeViewer(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddScoped<Viewing>();
-
             return serviceCollection;
         }
     }
