@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
-namespace ForgeViewer.NET
+namespace ForgeViewer.NET.Viewing
 {
     public class GuiViewer3d : Viewer3d
     {
@@ -21,5 +20,6 @@ namespace ForgeViewer.NET
             var module = await ModuleTask.Value;
             JsViewer = await module.InvokeAsync<IJSObjectReference>("GuiViewer3dInitializer", id);
         }
+
     }
 }

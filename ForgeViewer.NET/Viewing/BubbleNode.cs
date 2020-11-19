@@ -1,8 +1,7 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
-namespace ForgeViewer.NET
+namespace ForgeViewer.NET.Viewing
 {
     public class BubbleNode
     {

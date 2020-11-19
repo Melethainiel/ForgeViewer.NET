@@ -1,21 +1,49 @@
 ﻿export function ViewingInitializer(options, helper) {
-    let id;
     if (options.getAccessToken) {
-        options.getAccessToken = function () {
-            return helper.invokeMethodAsync("GetAccessToken")
+        options.getAccessToken = async function (onSuccess) {
+            let accessToken = await new Promise((resolve => resolve(helper.invokeMethodAsync("GetAccessToken"))));
+            let expirationTimeSeconds = 5 * 60; // 5 minutes
+            onSuccess(accessToken, expirationTimeSeconds);
         }
     }
-    Autodesk.Viewing.Initializer(options, helper.invokeMethodAsync("InitializerCallback"));
+    Autodesk.Viewing.Initializer(options, () => {
+        helper.invokeMethodAsync("InitializerCallback")
+    });
 }
 
 export function Viewer3dInitializer(id) {
     return new Autodesk.Viewing.Viewer3D(document.getElementById(id));
+}
 
+export function AddViewEventListener(view, eventName, helper) {
+    view.addEventListener(eventName, (obj) => {
+        OnEventRaised(eventName, obj, helper);
+    })
+}
+
+
+function OnEventRaised(eventName, obj, helper){
+    switch (eventName) {
+        case "viewerInitialized" :
+            helper.invokeMethodAsync("EventListener", eventName, null)
+            break;
+        case "viewerResize":
+            helper.invokeMethodAsync("EventListener", eventName, [obj.width, obj.height])
+            break;
+        default:
+            break;
+    }
+}
+
+
+export function GetToolbar(view) {
+    return view.toolbar;
 }
 
 export function GuiViewer3dInitializer(id) {
     return new Autodesk.Viewing.GuiViewer3D(document.getElementById(id));
 }
+
 
 export function loadDocument(urn) {
     return new Promise((resolve, reject) => {
