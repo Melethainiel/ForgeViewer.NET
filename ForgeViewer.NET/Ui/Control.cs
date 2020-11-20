@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using ForgeViewer.NET.Models;
 using Microsoft.JSInterop;
 
 namespace ForgeViewer.NET.Ui
@@ -25,17 +26,17 @@ namespace ForgeViewer.NET.Ui
         
         #region Methods
 
-        public async Task<object> GetDimensions()
+        public async Task<Dimension> GetDimensions()
         {
-            return await JsControl.InvokeAsync<object>("getDimensions");
+            return await JsControl.InvokeAsync<Dimension>("getDimensions");
         }
         public async Task<string> GetId()
         {
             return await JsControl.InvokeAsync<string>("getId");
         }
-        public async Task<object> GetPosition()
+        public async Task<Position> GetPosition()
         {
-            return await JsControl.InvokeAsync<object>("getPosition");
+            return await JsControl.InvokeAsync<Position>("getPosition");
         }
         public async Task<string> GetToolTip()
         {

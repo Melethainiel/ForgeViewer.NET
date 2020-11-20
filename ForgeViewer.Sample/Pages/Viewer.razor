@@ -5,6 +5,7 @@
 @using ForgeViewer.NET.Ui
 @using ForgeViewer.NET.Viewing
 @using ForgeViewer.Sample.Data
+@using System.Globalization
 @inject ViewerViewModel ViewModel
 @inject IServiceProvider ServiceProvider
 @inject IHttpClientFactory Factory
@@ -14,6 +15,7 @@
     <div class="flex-fill">
         <div id="demo" style="position: relative; height: calc(100% - 120px); width: calc(100% - 0px);">
         </div>
+        <p>Current selection : @_currentSelection</p>
     </div>
 </div>
 
@@ -21,19 +23,27 @@
 
     private GuiViewer3d GuiViewer3d { get; set; }
     private Viewing Viewing { get; set; }
+    private string _currentSelection;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Viewing = Viewing.Create(ServiceProvider);
-        var opt = GetOptions();
-        await Viewing.Initializer(opt, OnInit);
+        if (firstRender)
+        {
+            Viewing = Viewing.Create(ServiceProvider);
+            var opt = GetOptions();
+            await Viewing.Initializer(opt, OnInit);
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task OnInit()
     {
         GuiViewer3d = GuiViewer3d.Create(ServiceProvider);
         await GuiViewer3d.Initializer("demo");
-        await GuiViewer3d.AddEventListener("geometryLoaded", OnViewerInit);
+        await GuiViewer3d.AddEventListener(ViewerEvent.GeometryLoadedEvent, OnViewerInit);
+        await GuiViewer3d.AddEventListener(ViewerEvent.ViewerResizeEvent, OnViewerInit);
+        await GuiViewer3d.AddEventListener(ViewerEvent.SelectionChangedEvent, OnSelectionChanged);
 
         await GuiViewer3d.Start();
 
@@ -47,12 +57,22 @@
         await GuiViewer3d.LoadDocumentNode(document, getDefaultGeometry);
     }
 
-    private async Task OnViewerInit(object[]? obj)
+    private async Task OnSelectionChanged(object? arg)
+    {
+        if (arg is not Selection selection)
+            return;
+
+        _currentSelection = selection.DbIdArray?.Select(i => i.ToString(CultureInfo.InvariantCulture)).Aggregate((a, b) => $"{a},{b}");
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private async Task OnViewerInit(object? obj)
     {
         await GuiViewer3d.LoadParameter<ToolBar>(nameof(ToolBar));
         var modelTools = await GuiViewer3d.ToolBar.GetControl<GroupControl>("modelTools");
         await modelTools.RemoveControl("toolbar-explodeTool");
-        
+
         var settingsTools = await GuiViewer3d.ToolBar.GetControl<GroupControl>("settingsTools");
         await settingsTools.RemoveControl("toolbar-propertiesTool");
     }
@@ -72,5 +92,6 @@
         };
         return options;
     }
+
 
 }

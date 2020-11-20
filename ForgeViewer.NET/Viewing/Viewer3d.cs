@@ -4,6 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ForgeViewer.NET.Misc;
+using ForgeViewer.NET.Models;
 using ForgeViewer.NET.Ui;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -30,7 +32,7 @@ namespace ForgeViewer.NET.Viewing
             protected set => _toolBar = value;
         }
 
-        private readonly Dictionary<string, Func<object[]?, Task>> _funcs;
+        private readonly Dictionary<string, Func<object?, Task>> _eventAsyncDictionary;
         private ToolBar? _toolBar;
 
         #endregion
@@ -44,7 +46,7 @@ namespace ForgeViewer.NET.Viewing
 
         protected Viewer3d(IJSRuntime jsRuntime)
         {
-            _funcs = new Dictionary<string, Func<object[]?, Task>>();
+            _eventAsyncDictionary = new Dictionary<string, Func<object?, Task>>();
             ModuleTask = new Lazy<Task<IJSObjectReference>>(() =>
                 jsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/ForgeViewer.NET/ForgeViewer.js")
                     .AsTask());
@@ -79,59 +81,32 @@ namespace ForgeViewer.NET.Viewing
         {
             await JsViewer.InvokeAsync<string>("loadDocumentNode", document.JsDocument, manifestNode.JsBubbleNode);
         }
-
-        public async Task AddEventListener(string eventName, Func<object[]?, Task> action)
+        
+        public async Task AddEventListener(ViewerEvent viewerEvent, Func<object?, Task> action)
         {
+            var eventName = viewerEvent.DescriptionAttr(); 
             var module = await ModuleTask.Value;
-            _funcs.Add(eventName, action);
+            _eventAsyncDictionary.Add(eventName, action);
             await module.InvokeAsync<string>("AddViewEventListener", JsViewer, eventName,
                 DotNetObjectReference.Create(this));
         }
+        
 
         [JSInvokable]
-        public void EventListener(string eventName, params object[]? obj)
+        public async Task EventListener(string eventName, JsonElement? obj)
         {
-            if (obj is null)
+            var viewerEvent = eventName.GetValueFromDescription<ViewerEvent>();
+            var responseType = viewerEvent.TypeAttr();
+            
+            if (responseType is null)
             {
-                _funcs[eventName].Invoke(null);
+                await _eventAsyncDictionary[eventName].Invoke(null);
                 return;
             }
 
-            var args = new List<object>();
+            var type = obj.ToObject(responseType);
+            await _eventAsyncDictionary[eventName].Invoke(type);
 
-            foreach (var o in obj)
-            {
-                var el = o is JsonElement element ? element : default;
-
-                switch (el.ValueKind)
-                {
-                    case JsonValueKind.Undefined:
-                        args.Add(el.GetString() ?? string.Empty);
-                        break;
-                    case JsonValueKind.Object:
-                        break;
-                    case JsonValueKind.Array:
-                        break;
-                    case JsonValueKind.String:
-                        args.Add(el.GetString() ?? string.Empty);
-                        break;
-                    case JsonValueKind.Number:
-                        args.Add(el.GetDouble());
-                        break;
-                    case JsonValueKind.True:
-                        args.Add(el.GetBoolean());
-                        break;
-                    case JsonValueKind.False:
-                        args.Add(el.GetBoolean());
-                        break;
-                    case JsonValueKind.Null:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            _funcs[eventName].Invoke(args.ToArray());
         }
 
         #endregion

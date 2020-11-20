@@ -24,17 +24,21 @@ export function AddViewEventListener(view, eventName, helper) {
 
 function OnEventRaised(eventName, obj, helper) {
     switch (eventName) {
-        case "viewerInitialized" :
-            helper.invokeMethodAsync("EventListener", eventName, null);
+        case "selection" :
+            helper.invokeMethodAsync("EventListener", eventName, {
+                fragIdsArray: obj.fragIdsArray,
+                dbIdArray: obj.dbIdArray,
+                nodeArray : obj.nodeArray
+            });
             break;
         case "viewerResize":
-            helper.invokeMethodAsync("EventListener", eventName, [obj.width, obj.height]);
-            break;
-        case "geometryLoaded":
-            helper.invokeMethodAsync("EventListener", eventName, null);
+            helper.invokeMethodAsync("EventListener", eventName, {
+                width: obj.width,
+                height: obj.height
+            });
             break;
         default:
-            break;
+            helper.invokeMethodAsync("EventListener", eventName, null);
     }
 }
 
