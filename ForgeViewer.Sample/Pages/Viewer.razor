@@ -1,9 +1,11 @@
 ﻿@page "/Viewer"
 @using ForgeViewer.Sample.ViewModels
-@using ForgeViewer.NET
 @using ForgeViewer.NET.Models
 @using System.Net.Http.Json
+@using ForgeViewer.NET.Ui
+@using ForgeViewer.NET.Viewing
 @using ForgeViewer.Sample.Data
+@using System.Globalization
 @inject ViewerViewModel ViewModel
 @inject IServiceProvider ServiceProvider
 @inject IHttpClientFactory Factory
@@ -11,9 +13,9 @@
 
 <div class="container-fluid d-flex h-100">
     <div class="flex-fill">
-        <div id="demo"
-             style="position: relative; height: calc(100% - 0px); width: calc(100% - 0px);">
+        <div id="demo" style="position: relative; height: calc(100% - 120px); width: calc(100% - 0px);">
         </div>
+        <p>Current selection : @_currentSelection</p>
     </div>
 </div>
 
@@ -21,34 +23,75 @@
 
     private GuiViewer3d GuiViewer3d { get; set; }
     private Viewing Viewing { get; set; }
+    private string _currentSelection;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Viewing = Viewing.Create(ServiceProvider);
-        var opt = await GetOptions();
-        await Viewing.Initializer(opt);
+        if (firstRender)
+        {
+            Viewing = Viewing.Create(ServiceProvider);
+            var opt = GetOptions();
+            await Viewing.Initializer(opt, OnInit);
+        }
 
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task OnInit()
+    {
         GuiViewer3d = GuiViewer3d.Create(ServiceProvider);
         await GuiViewer3d.Initializer("demo");
+        await GuiViewer3d.AddEventListener(ViewerEvent.GeometryLoadedEvent, OnViewerInit);
+        await GuiViewer3d.AddEventListener(ViewerEvent.ViewerResizeEvent, OnViewerInit);
+        await GuiViewer3d.AddEventListener(ViewerEvent.SelectionChangedEvent, OnSelectionChanged);
+
         await GuiViewer3d.Start();
 
         var urn = "urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cGJpLXZpZXdlci9NYXF1ZXR0ZSUyMEdPRSUyMHYwNGQuaWZj";
-        var document = await Document.Load(ServiceProvider, urn);
+        await Document.Load(ServiceProvider, urn, OnSuccess);
+    }
+
+    private async Task OnSuccess(Document document)
+    {
         var getDefaultGeometry = await (await document.GetRoot()).GetDefaultGeometry();
         await GuiViewer3d.LoadDocumentNode(document, getDefaultGeometry);
     }
 
-    private async Task<Options> GetOptions()
+    private async Task OnSelectionChanged(object? arg)
     {
-        var client = Factory.CreateClient("auth");
-        var resp = await client.GetAsync("https://ifcdb.azurewebsites.net/Forge");
-        var respAsObj = await resp.Content.ReadFromJsonAsync<Auth>();
-        var token = respAsObj?.AccessToken ?? throw new Exception("Can't get access token");
+        if (arg is not Selection selection)
+            return;
+
+        _currentSelection = selection.DbIdArray?.Select(i => i.ToString(CultureInfo.InvariantCulture)).Aggregate((a, b) => $"{a},{b}");
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    private async Task OnViewerInit(object? obj)
+    {
+        await GuiViewer3d.LoadParameter<ToolBar>(nameof(ToolBar));
+        var modelTools = await GuiViewer3d.ToolBar.GetControl<GroupControl>("modelTools");
+        await modelTools.RemoveControl("toolbar-explodeTool");
+
+        var settingsTools = await GuiViewer3d.ToolBar.GetControl<GroupControl>("settingsTools");
+        await settingsTools.RemoveControl("toolbar-propertiesTool");
+    }
+
+    private Options GetOptions()
+    {
         var options = new Options
         {
-            AccessToken = token
+            GetAccessToken = async () =>
+            {
+                var client = Factory.CreateClient("auth");
+                var resp = await client.GetAsync("https://ifcdb.azurewebsites.net/Forge");
+                var respAsObj = await resp.Content.ReadFromJsonAsync<Auth>();
+                var token = respAsObj?.AccessToken ?? throw new Exception("Can't get access token");
+                return token;
+            }
         };
         return options;
     }
+
 
 }

@@ -1,22 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using ForgeViewer.NET.Misc;
 using ForgeViewer.NET.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
-namespace ForgeViewer.NET
+namespace ForgeViewer.NET.Viewing
 {
     public class Viewing
     {
         private Lazy<Task<IJSObjectReference>> ModuleTask { get; }
         private Func<Task<string>>? _getAccessToken;
+        private Func<Task>? _callBack;
+
         public static Viewing Create(IServiceProvider serviceProvider)
         {
             return new(serviceProvider.GetRequiredService<IJSRuntime>());
-            
         }
+
         private Viewing(IJSRuntime jsRuntime)
         {
             ModuleTask = new Lazy<Task<IJSObjectReference>>(() =>
@@ -25,15 +25,22 @@ namespace ForgeViewer.NET
         }
 
 
-        public async Task Initializer(Options? options)
+        public async Task Initializer(Options? options, Func<Task> callback)
         {
+            _callBack = callback;
             options ??= new Options();
             if (options.GetAccessToken is { })
-                _getAccessToken= options.GetAccessToken;
+                _getAccessToken = options.GetAccessToken;
 
 
             var module = await ModuleTask.Value;
             await module.InvokeVoidAsync("ViewingInitializer", options, DotNetObjectReference.Create(this));
+        }
+
+        [JSInvokable]
+        public async Task InitializerCallback()
+        {
+            await (_callBack?.Invoke() ?? throw new Exception("No function set"));
         }
 
         [JSInvokable]
