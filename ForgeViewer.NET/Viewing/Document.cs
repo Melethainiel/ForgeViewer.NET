@@ -1,13 +1,15 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
 namespace ForgeViewer.NET.Viewing
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class Document
     {
-        public IJSObjectReference JsDocument { get; private set; }
+        public IJSObjectReference JsDocument { get; }
 
         private Document(IJSObjectReference jsObjectReference)
         {

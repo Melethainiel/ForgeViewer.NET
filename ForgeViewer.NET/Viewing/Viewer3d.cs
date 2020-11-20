@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using ForgeViewer.NET.Ui;
@@ -8,6 +10,7 @@ using Microsoft.JSInterop;
 
 namespace ForgeViewer.NET.Viewing
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class Viewer3d
     {
         #region Properties
@@ -21,9 +24,15 @@ namespace ForgeViewer.NET.Viewing
             set => _jsViewer = value;
         }
 
-        public ToolBar? ToolBar { get; protected set; }
+        public ToolBar ToolBar
+        {
+            get => _toolBar ?? throw new Exception($"{nameof(ToolBar)} hasn't been loaded");
+            protected set => _toolBar = value;
+        }
 
-        private Dictionary<string, Func<object[]?, Task>> _funcs;
+        private readonly Dictionary<string, Func<object[]?, Task>> _funcs;
+        private ToolBar? _toolBar;
+
         #endregion
 
         #region Ctor
@@ -35,7 +44,7 @@ namespace ForgeViewer.NET.Viewing
 
         protected Viewer3d(IJSRuntime jsRuntime)
         {
-            _funcs = new Dictionary<string, Func<object[], Task>>();
+            _funcs = new Dictionary<string, Func<object[]?, Task>>();
             ModuleTask = new Lazy<Task<IJSObjectReference>>(() =>
                 jsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/ForgeViewer.NET/ForgeViewer.js")
                     .AsTask());
@@ -56,6 +65,16 @@ namespace ForgeViewer.NET.Viewing
             await JsViewer.InvokeVoidAsync("start");
         }
 
+        public async Task LoadParameter<T>(string parameterName)
+        {
+            var module = await ModuleTask.Value;
+            var reference =
+                await module.InvokeAsync<IJSObjectReference>("GetProperty", JsViewer, parameterName.ToLower());
+            var obj = typeof(T).GetMethod("Create", BindingFlags.Static | BindingFlags.Public)
+                ?.Invoke(null, new object?[] {reference});
+            GetType().GetProperty(parameterName)?.SetValue(this, obj);
+        }
+
         public async Task LoadDocumentNode(Document document, BubbleNode manifestNode)
         {
             await JsViewer.InvokeAsync<string>("loadDocumentNode", document.JsDocument, manifestNode.JsBubbleNode);
@@ -65,7 +84,8 @@ namespace ForgeViewer.NET.Viewing
         {
             var module = await ModuleTask.Value;
             _funcs.Add(eventName, action);
-            await module.InvokeAsync<string>("AddViewEventListener", JsViewer, eventName, DotNetObjectReference.Create(this));
+            await module.InvokeAsync<string>("AddViewEventListener", JsViewer, eventName,
+                DotNetObjectReference.Create(this));
         }
 
         [JSInvokable]
@@ -78,11 +98,11 @@ namespace ForgeViewer.NET.Viewing
             }
 
             var args = new List<object>();
-            
+
             foreach (var o in obj)
             {
                 var el = o is JsonElement element ? element : default;
-                
+
                 switch (el.ValueKind)
                 {
                     case JsonValueKind.Undefined:
@@ -110,10 +130,10 @@ namespace ForgeViewer.NET.Viewing
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            
+
             _funcs[eventName].Invoke(args.ToArray());
         }
-        
+
         #endregion
     }
 }

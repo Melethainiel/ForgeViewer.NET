@@ -22,13 +22,16 @@ export function AddViewEventListener(view, eventName, helper) {
 }
 
 
-function OnEventRaised(eventName, obj, helper){
+function OnEventRaised(eventName, obj, helper) {
     switch (eventName) {
         case "viewerInitialized" :
-            helper.invokeMethodAsync("EventListener", eventName, null)
+            helper.invokeMethodAsync("EventListener", eventName, null);
             break;
         case "viewerResize":
-            helper.invokeMethodAsync("EventListener", eventName, [obj.width, obj.height])
+            helper.invokeMethodAsync("EventListener", eventName, [obj.width, obj.height]);
+            break;
+        case "geometryLoaded":
+            helper.invokeMethodAsync("EventListener", eventName, null);
             break;
         default:
             break;
@@ -36,8 +39,9 @@ function OnEventRaised(eventName, obj, helper){
 }
 
 
-export function GetToolbar(view) {
-    return view.toolbar;
+export function GetProperty(view, propertyName) {
+    let prop = view[propertyName];
+    return prop;
 }
 
 export function GuiViewer3dInitializer(id) {

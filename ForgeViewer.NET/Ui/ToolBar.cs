@@ -1,19 +1,27 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.JSInterop;
 
 namespace ForgeViewer.NET.Ui
 {
-    public class ToolBar
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class ToolBar : GroupControl
     {
-        public static ToolBar Create(IJSObjectReference jsObjectReference)
+        #region Ctor
+
+        protected ToolBar(IJSObjectReference jsObjectReference) : base(jsObjectReference)
+        {
+        }
+
+        public new static ToolBar Create(IJSObjectReference jsObjectReference)
         {
             return new(jsObjectReference);
         }
 
-        private ToolBar(IJSObjectReference jsObjectReference)
-        {
-            JsToolBar = jsObjectReference;
-        }
+        
 
-        public IJSObjectReference JsToolBar { get; }        
+
+        #endregion
+
+      
     }
 }
