@@ -24,6 +24,70 @@ export function AddViewEventListener(view, eventName, helper) {
 
 function OnEventRaised(eventName, obj, helper) {
     switch (eventName) {
+        case "explodeChanged":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                scale: obj.scale
+            });
+            break;
+        case "extensionLoaded":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                extensionId: obj.extensionId
+            });
+            break;
+        case "extensionUnloaded":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                extensionId: obj.extensionId
+            });
+            break;
+        case "finalFrameRenderedChanged":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                finalFrame: obj.finalFrame
+            });
+            break;
+        case "fitToView":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                immediate: obj.immediate,
+                nodeIdArray: obj.nodeIdArray
+            });
+            break;
+        case "hide":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                nodeIdArray: obj.nodeIdArray
+            });
+            break;
+        case "isolate":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                nodeIdArray: obj.nodeIdArray
+            });
+            break;
+        case "loadMissingGeometry":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                delay: obj.delay
+            });
+            break;
+        case "navigationModeChanged":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                id: obj.id
+            });
+            break;
+        case "progressUpdate":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                percent: obj.percent,
+                state: obj.state
+            });
+            break;
+        case "prefChanged":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                name: obj.name,
+                value: obj.value
+            });
+            break;
+        case "prefReset":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                name: obj.name,
+                value: obj.value
+            });
+            break;
         case "selection" :
             helper.invokeMethodAsync("EventListener", eventName, {
                 fragIdsArray: obj.fragIdsArray,
@@ -31,10 +95,26 @@ function OnEventRaised(eventName, obj, helper) {
                 nodeArray : obj.nodeArray
             });
             break;
+        case "show" :
+            helper.invokeMethodAsync("EventListener", eventName, {     
+                nodeIdArray: obj.nodeIdArray
+            });
+            break;
+        case "toolChanged":
+            helper.invokeMethodAsync("EventListener", eventName, {
+                toolName: obj.toolName,
+                active: obj.active
+            });
+            break;
         case "viewerResize":
             helper.invokeMethodAsync("EventListener", eventName, {
                 width: obj.width,
                 height: obj.height
+            });
+            break;
+        case "viewerStateRestored" :
+            helper.invokeMethodAsync("EventListener", eventName, {
+                value: obj.value
             });
             break;
         default:

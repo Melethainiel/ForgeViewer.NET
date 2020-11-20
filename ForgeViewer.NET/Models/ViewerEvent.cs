@@ -23,14 +23,19 @@ namespace ForgeViewer.NET.Models
         [Description("escape")]
         EscapeEvent,
         [Description("explodeChanged")]
+        [EventResponse(typeof(Explode))]
         ExplodeChangeEvent,
         [Description("extensionLoaded")]
+        [EventResponse(typeof(Extension))]
         ExtensionLoadedEvent,
         [Description("extensionUnloaded")]
+        [EventResponse(typeof(Extension))]
         ExtensionUnloadedEvent,
         [Description("finalFrameRenderedChanged")]
+        [EventResponse(typeof(FinalFrameRendered))]
         FinalFrameRenderedChangedEvent,
         [Description("fitToView")]
+        [EventResponse(typeof(FitToView))]
         FitToViewEvent,
         [Description("fragmentsLoaded")]
         FragmentsLoadedEvent,
@@ -41,16 +46,19 @@ namespace ForgeViewer.NET.Models
         [Description("geometryDownloadComplete")]
         GeometryDownloadCompleteEvent,
         [Description("hide")]
+        [EventResponse(typeof(Objects))]
         HideEvent,
         [Description("hyperlink")]
         HyperlinkEvent,
         [Description("isolate")]
+        [EventResponse(typeof(Objects))]
         IsolateEvent,
         [Description("layerVisibilityChanged")]
         LayerVisibilityChangedEvent,
         [Description("loadGeometry")]
         LoadGeometryEvent,
         [Description("loadMissingGeometry")]
+        [EventResponse(typeof(MissingGeometry))]
         LoadMissingGeometry,
         [Description("modelAdded")]
         ModelAddedEvent,
@@ -63,16 +71,20 @@ namespace ForgeViewer.NET.Models
         [Description("modelUnloaded")]
         ModelUnloadedEvent,
         [Description("navigationModeChanged")]
+        [EventResponse(typeof(NavigationMode))]
         NavigationModeChangedEvent,
         [Description("objectTreeCreated")]
         ObjectTreeCreatedEvent,
         [Description("objectTreeUnavailable")]
         ObjectTreeUnavailableEvent,
         [Description("prefChanged")]
+        [EventResponse(typeof(Preference))]
         PrefChangedEvent,
         [Description("prefReset")]
+        [EventResponse(typeof(Preference))]
         PrefResetEvent,
         [Description("progressUpdate")]
+        [EventResponse(typeof(ProgressUpdate))]
         ProgressUpdateEvent,
         [Description("renderFirstPixel")]
         RenderFirstPixel,
@@ -88,10 +100,12 @@ namespace ForgeViewer.NET.Models
         [EventResponse(typeof(Selection))]
         SelectionChangedEvent,
         [Description("show")]
+        [EventResponse(typeof(Objects))]
         ShowEvent,
         [Description("texturesLoaded")]
         TexturesLoadedEvent,
         [Description("toolChanged")]
+        [EventResponse(typeof(Tool))]
         ToolChangeEvent,
         [Description("toolbarCreated")]
         ToolbarCreatedEvent,
@@ -101,6 +115,7 @@ namespace ForgeViewer.NET.Models
         [EventResponse(typeof(Dimension))]
         ViewerResizeEvent,
         [Description("viewerStateRestored")]
+        [EventResponse(typeof(ViewerRestored))]
         ViewerStateRestoredEvent,
         [Description("viewerUninitialized")]
         ViewerUninitialized,
