@@ -142,7 +142,3 @@ export function loadDocument(urn) {
         })
     })
 }
-
-export function getExtension(extensionId, obj, helper){
-    obj.getExtension(extensionId, (ext) => helper.invokeMethodAsync("OnGetExtension",ext))
-}

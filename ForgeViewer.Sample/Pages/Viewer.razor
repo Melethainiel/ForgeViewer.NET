@@ -42,7 +42,7 @@
         GuiViewer3d = GuiViewer3d.Create(ServiceProvider);
         await GuiViewer3d.Initializer("demo");
         // await GuiViewer3d.AddEventListener(ViewerEvent.GeometryLoadedEvent, OnViewerInit);
-        // await GuiViewer3d.AddEventListener(ViewerEvent.ExtensionLoadedEvent, OnExtLoaded);
+        await GuiViewer3d.AddEventListener(ViewerEvent.ExtensionLoadedEvent, OnExtLoaded);
 
         await GuiViewer3d.Start();
 
@@ -52,14 +52,17 @@
 
     private async Task OnExtLoaded(object? arg)
     {
-        if (arg is not ExtensionResponse extensionResponse || extensionResponse.ExtensionId != "Autodesk.Explode")
+        var ext = new[] {"Autodesk.PropertiesManager", "Autodesk.Explode"};
+        if (arg is not ExtensionResponse extensionResponse || !ext.Contains(extensionResponse.ExtensionId))
             return;
 
         
-        await GuiViewer3d.GetExtensions(extensionResponse.ExtensionId, async extension =>
-        {
-            await extension.Unload();
-        });
+        await GuiViewer3d.GetExtensions(extensionResponse.ExtensionId, Callback);
+    }
+
+    private async Task Callback(Extension extension)
+    {
+        await extension.Unload();
     }
 
     private async Task OnSuccess(Document document)

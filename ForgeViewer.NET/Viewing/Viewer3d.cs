@@ -84,11 +84,12 @@ namespace ForgeViewer.NET.Viewing
             await JsViewer.InvokeAsync<IJSObjectReference>("loadDocumentNode", document.JsDocument, manifestNode.JsBubbleNode);
         }
 
-        public async Task GetExtensions(string extensionId, Func<Extension, Task> callback)
+        public async Task<Extension> GetExtensions(string extensionId, Func<Extension, Task> callback)
         {
-            _onGetExtension = callback;
-            var module = await ModuleTask.Value;
-            await module.InvokeVoidAsync("getExtension", extensionId, JsViewer, DotNetObjectReference.Create(this));
+            var reference = await JsViewer.InvokeAsync<IJSObjectReference>("getExtension", extensionId);
+            var extension = Extension.Create(reference);
+            await callback.Invoke(extension);
+            return extension;
         }
 
         public async Task AddEventListener(ViewerEvent viewerEvent, Func<object?, Task> action)
@@ -98,13 +99,6 @@ namespace ForgeViewer.NET.Viewing
             _eventAsyncDictionary.Add(eventName, action);
             await module.InvokeAsync<string>("AddViewEventListener", JsViewer, eventName,
                 DotNetObjectReference.Create(this));
-        }
-
-        [JSInvokable]
-        public async Task OnGetExtension(JSObjectReference reference)
-        {
-            var extension = Extension.Create(reference);
-            await _onGetExtension.Invoke(extension);
         }
 
         [JSInvokable]
