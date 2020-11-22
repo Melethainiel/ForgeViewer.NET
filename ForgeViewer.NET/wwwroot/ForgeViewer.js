@@ -21,7 +21,6 @@ export function AddViewEventListener(view, eventName, helper) {
     })
 }
 
-
 function OnEventRaised(eventName, obj, helper) {
     switch (eventName) {
         case "explodeChanged":
@@ -122,16 +121,17 @@ function OnEventRaised(eventName, obj, helper) {
     }
 }
 
-
 export function GetProperty(view, propertyName) {
-    let prop = view[propertyName];
-    return prop;
+    return view[propertyName];
 }
 
 export function GuiViewer3dInitializer(id) {
     return new Autodesk.Viewing.GuiViewer3D(document.getElementById(id));
 }
 
+export async function loadDocumentNode(viewer, document, manifestNode) {
+    return await viewer.loadDocumentNode(document, manifestNode);
+}
 
 export function loadDocument(urn) {
     return new Promise((resolve, reject) => {
@@ -141,4 +141,8 @@ export function loadDocument(urn) {
             reject(message)
         })
     })
+}
+
+export function getExtension(extensionId, obj, helper){
+    obj.getExtension(extensionId, (ext) => helper.invokeMethodAsync("OnGetExtension",ext))
 }

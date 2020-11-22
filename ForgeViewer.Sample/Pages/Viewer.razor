@@ -41,14 +41,25 @@
     {
         GuiViewer3d = GuiViewer3d.Create(ServiceProvider);
         await GuiViewer3d.Initializer("demo");
-        await GuiViewer3d.AddEventListener(ViewerEvent.GeometryLoadedEvent, OnViewerInit);
-        await GuiViewer3d.AddEventListener(ViewerEvent.ViewerResizeEvent, OnViewerInit);
-        await GuiViewer3d.AddEventListener(ViewerEvent.SelectionChangedEvent, OnSelectionChanged);
+        // await GuiViewer3d.AddEventListener(ViewerEvent.GeometryLoadedEvent, OnViewerInit);
+        // await GuiViewer3d.AddEventListener(ViewerEvent.ExtensionLoadedEvent, OnExtLoaded);
 
         await GuiViewer3d.Start();
 
         var urn = "urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cGJpLXZpZXdlci9NYXF1ZXR0ZSUyMEdPRSUyMHYwNGQuaWZj";
         await Document.Load(ServiceProvider, urn, OnSuccess);
+    }
+
+    private async Task OnExtLoaded(object? arg)
+    {
+        if (arg is not ExtensionResponse extensionResponse || extensionResponse.ExtensionId != "Autodesk.Explode")
+            return;
+
+        
+        await GuiViewer3d.GetExtensions(extensionResponse.ExtensionId, async extension =>
+        {
+            await extension.Unload();
+        });
     }
 
     private async Task OnSuccess(Document document)
