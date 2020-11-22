@@ -9,6 +9,7 @@ using ForgeViewer.NET.Models;
 using ForgeViewer.NET.Ui;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
+using Microsoft.JSInterop.Implementation;
 
 namespace ForgeViewer.NET.Viewing
 {
@@ -34,6 +35,7 @@ namespace ForgeViewer.NET.Viewing
 
         private readonly Dictionary<string, Func<object?, Task>> _eventAsyncDictionary;
         private ToolBar? _toolBar;
+        private Func<Extension, Task> _onGetExtension;
 
         #endregion
 
@@ -79,25 +81,32 @@ namespace ForgeViewer.NET.Viewing
 
         public async Task LoadDocumentNode(Document document, BubbleNode manifestNode)
         {
-            await JsViewer.InvokeAsync<string>("loadDocumentNode", document.JsDocument, manifestNode.JsBubbleNode);
+            await JsViewer.InvokeAsync<IJSObjectReference>("loadDocumentNode", document.JsDocument, manifestNode.JsBubbleNode);
         }
-        
+
+        public async Task<Extension> GetExtensions(string extensionId, Func<Extension, Task> callback)
+        {
+            var reference = await JsViewer.InvokeAsync<IJSObjectReference>("getExtension", extensionId);
+            var extension = Extension.Create(reference);
+            await callback.Invoke(extension);
+            return extension;
+        }
+
         public async Task AddEventListener(ViewerEvent viewerEvent, Func<object?, Task> action)
         {
-            var eventName = viewerEvent.DescriptionAttr(); 
+            var eventName = viewerEvent.DescriptionAttr();
             var module = await ModuleTask.Value;
             _eventAsyncDictionary.Add(eventName, action);
             await module.InvokeAsync<string>("AddViewEventListener", JsViewer, eventName,
                 DotNetObjectReference.Create(this));
         }
-        
 
         [JSInvokable]
         public async Task EventListener(string eventName, JsonElement? obj)
         {
             var viewerEvent = eventName.GetValueFromDescription<ViewerEvent>();
             var responseType = viewerEvent.TypeAttr();
-            
+
             if (responseType is null)
             {
                 await _eventAsyncDictionary[eventName].Invoke(null);
@@ -106,9 +115,14 @@ namespace ForgeViewer.NET.Viewing
 
             var type = obj.ToObject(responseType);
             await _eventAsyncDictionary[eventName].Invoke(type);
-
         }
 
         #endregion
     }
 }
+
+/*
+getExtension(extensionId: string, callback?: (ext: Extension) => void): Extension;
+unloadExtension(extensionId: string): boolean;
+loadExtensionAsync(extensionId: string, url: string, options?: object): Promise<Extension>; 
+ */

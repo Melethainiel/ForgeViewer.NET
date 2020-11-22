@@ -26,10 +26,10 @@ namespace ForgeViewer.NET.Models
         [EventResponse(typeof(Explode))]
         ExplodeChangeEvent,
         [Description("extensionLoaded")]
-        [EventResponse(typeof(Extension))]
+        [EventResponse(typeof(ExtensionResponse))]
         ExtensionLoadedEvent,
         [Description("extensionUnloaded")]
-        [EventResponse(typeof(Extension))]
+        [EventResponse(typeof(ExtensionResponse))]
         ExtensionUnloadedEvent,
         [Description("finalFrameRenderedChanged")]
         [EventResponse(typeof(FinalFrameRendered))]
