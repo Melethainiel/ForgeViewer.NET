@@ -14,6 +14,7 @@ using Microsoft.JSInterop.Implementation;
 namespace ForgeViewer.NET.Viewing
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
     public class Viewer3d
     {
         #region Properties
@@ -35,7 +36,6 @@ namespace ForgeViewer.NET.Viewing
 
         private readonly Dictionary<string, Func<object?, Task>> _eventAsyncDictionary;
         private ToolBar? _toolBar;
-        private Func<Extension, Task> _onGetExtension;
 
         #endregion
 
@@ -79,9 +79,11 @@ namespace ForgeViewer.NET.Viewing
             GetType().GetProperty(parameterName)?.SetValue(this, obj);
         }
 
-        public async Task LoadDocumentNode(Document document, BubbleNode manifestNode)
+        public async Task<Model> LoadDocumentNode(Document document, BubbleNode manifestNode)
         {
-            await JsViewer.InvokeAsync<IJSObjectReference>("loadDocumentNode", document.JsDocument, manifestNode.JsBubbleNode);
+            var reference = await JsViewer.InvokeAsync<IJSObjectReference>("loadDocumentNode", document.JsDocument,
+                manifestNode.JsBubbleNode);
+            return Model.Create(reference);
         }
 
         public async Task<Extension> GetExtensions(string extensionId, Func<Extension, Task> callback)
@@ -92,6 +94,11 @@ namespace ForgeViewer.NET.Viewing
             return extension;
         }
 
+        public async Task UnloadExtension(string extensionId)
+        {
+            await JsViewer.InvokeVoidAsync("unloadExtension", extensionId);
+        }
+
         public async Task AddEventListener(ViewerEvent viewerEvent, Func<object?, Task> action)
         {
             var eventName = viewerEvent.DescriptionAttr();
@@ -100,6 +107,7 @@ namespace ForgeViewer.NET.Viewing
             await module.InvokeAsync<string>("AddViewEventListener", JsViewer, eventName,
                 DotNetObjectReference.Create(this));
         }
+
 
         [JSInvokable]
         public async Task EventListener(string eventName, JsonElement? obj)
@@ -120,9 +128,3 @@ namespace ForgeViewer.NET.Viewing
         #endregion
     }
 }
-
-/*
-getExtension(extensionId: string, callback?: (ext: Extension) => void): Extension;
-unloadExtension(extensionId: string): boolean;
-loadExtensionAsync(extensionId: string, url: string, options?: object): Promise<Extension>; 
- */

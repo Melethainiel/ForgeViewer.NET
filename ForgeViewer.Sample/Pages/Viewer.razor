@@ -43,6 +43,7 @@
         await GuiViewer3d.Initializer("demo");
         // await GuiViewer3d.AddEventListener(ViewerEvent.GeometryLoadedEvent, OnViewerInit);
         await GuiViewer3d.AddEventListener(ViewerEvent.ExtensionLoadedEvent, OnExtLoaded);
+        await GuiViewer3d.AddEventListener(ViewerEvent.SelectionChangedEvent, OnSelectionChanged);
 
         await GuiViewer3d.Start();
 
@@ -68,7 +69,10 @@
     private async Task OnSuccess(Document document)
     {
         var getDefaultGeometry = await (await document.GetRoot()).GetDefaultGeometry();
-        await GuiViewer3d.LoadDocumentNode(document, getDefaultGeometry);
+        var model = await GuiViewer3d.LoadDocumentNode(document, getDefaultGeometry);
+        var isPdf = await model.IsPdf();
+        var is3d = await model.Is3d();
+        
     }
 
     private async Task OnSelectionChanged(object? arg)
