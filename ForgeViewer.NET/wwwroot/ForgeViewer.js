@@ -91,11 +91,11 @@ function OnEventRaised(eventName, obj, helper) {
             helper.invokeMethodAsync("EventListener", eventName, {
                 fragIdsArray: obj.fragIdsArray,
                 dbIdArray: obj.dbIdArray,
-                nodeArray : obj.nodeArray
+                nodeArray: obj.nodeArray
             });
             break;
         case "show" :
-            helper.invokeMethodAsync("EventListener", eventName, {     
+            helper.invokeMethodAsync("EventListener", eventName, {
                 nodeIdArray: obj.nodeIdArray
             });
             break;
@@ -119,6 +119,18 @@ function OnEventRaised(eventName, obj, helper) {
         default:
             helper.invokeMethodAsync("EventListener", eventName, null);
     }
+}
+
+export function CallFunction(context, functionName, ...args) {
+    if(args !== undefined && args.length === 1)
+        args = args[0];
+    return new Promise((resolve, reject) => {
+        context[functionName](args, (res) => {
+            resolve(res);
+        }, (...error) => {
+            reject(error)
+        })
+    })
 }
 
 export function GetProperty(view, propertyName) {

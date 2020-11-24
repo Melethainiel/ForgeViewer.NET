@@ -6,6 +6,7 @@
 @using ForgeViewer.NET.Viewing
 @using ForgeViewer.Sample.Data
 @using System.Globalization
+@using System.Text.Json
 @inject ViewerViewModel ViewModel
 @inject IServiceProvider ServiceProvider
 @inject IHttpClientFactory Factory
@@ -41,14 +42,13 @@
     {
         GuiViewer3d = GuiViewer3d.Create(ServiceProvider);
         await GuiViewer3d.Initializer("demo");
-        // await GuiViewer3d.AddEventListener(ViewerEvent.ToolbarCreatedEvent, OnViewerInit);
+    // await GuiViewer3d.AddEventListener(ViewerEvent.ToolbarCreatedEvent, OnViewerInit);
         await GuiViewer3d.AddEventListener(ViewerEvent.ExtensionLoadedEvent, OnExtLoaded);
         await GuiViewer3d.AddEventListener(ViewerEvent.SelectionChangedEvent, OnSelectionChanged);
 
         await GuiViewer3d.Start();
 
         var urn = "urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cGJpLXZpZXdlci9NYXF1ZXR0ZSUyMEdPRSUyMHYwNGQuaWZj";
-        await Document.Load(ServiceProvider, urn, OnSuccess);
         await Document.Load(ServiceProvider, urn, OnSuccess);
     }
 
@@ -58,7 +58,7 @@
         if (arg is not ExtensionResponse extensionResponse || !ext.Contains(extensionResponse.ExtensionId))
             return;
 
-        
+
         await GuiViewer3d.GetExtensions(extensionResponse.ExtensionId, Callback);
     }
 
@@ -71,25 +71,62 @@
     {
         var bubbleNode = await document.GetRoot();
         var getDefaultGeometry = await bubbleNode.GetDefaultGeometry();
-        var model = await GuiViewer3d.LoadDocumentNode(document, getDefaultGeometry, new
-        {
-            keepCurrentModels = true
-        });
-        var isPdf = await model.IsPdf();
-        var is3d = await model.Is3d();
-        
+        var model = await GuiViewer3d.LoadDocumentNode(document, getDefaultGeometry, new { keepCurrentModels = true });
     }
 
     private async Task OnSelectionChanged(object? arg)
     {
-        if (arg is not Selection selection)
+        if (arg is not Selection selection || selection.DbIdArray is null)
             return;
 
-        _currentSelection = selection.DbIdArray?.Select(i => i.ToString(CultureInfo.InvariantCulture)).Aggregate((a, b) => $"{a},{b}");
+        _currentSelection = selection.DbIdArray.Select(i => i.ToString(CultureInfo.InvariantCulture)).Aggregate((a, b) => $"{a},{b}");
+
+        foreach (var d in selection.DbIdArray)
+        {
+            await GetIfcGuid(d);
+        }
         StateHasChanged();
-        await Task.CompletedTask;
     }
 
+    private async Task GetIfcGuid(double selectionId)
+    {
+        await GuiViewer3d.GetProperties(selectionId, async result =>
+        {
+            var type = result.Properties?.SingleOrDefault(p => p.AttributeName == "LcOaNode:LcOaSceneBaseClassUserName");
+            if (type is not {})
+                throw new ArgumentException("not found", nameof(selectionId));
+
+            if (result.Properties?.SingleOrDefault(p => p.AttributeName == "LcIFCProperty:IFCString" && p.DisplayCategory == "IFC" && p.DisplayName == "GLOBALID") is not {} prop)
+            {
+                var parentId = result.Properties?.SingleOrDefault(p => p.AttributeName == "parent");
+                if (parentId is not {})
+                    return;
+                await GetIfcGuid(double.Parse(parentId.DisplayValue.ToString()));
+            }
+            else
+            {
+                _currentSelection = prop.DisplayValue.ToString();
+            }
+        });
+    }
+    
+    /*
+     *let ind = this._validSelection.findIndex(i => i.toLocaleLowerCase() == type.displayValue.toLocaleLowerCase());
+                if (ind == -1) {
+                    let parent = t.properties.find(p => p.attributeName == 'parent')
+                    if (parent)
+                        reslove(this.getIfcGuid(parent.displayValue))
+                    else
+                        reslove(undefined)
+                }
+                let ifcGuid = t.properties.find(p => p.attributeName == 'LcIFCProperty:IFCString' && p.displayCategory == 'IFC' && p.displayName == 'GLOBALID')
+                if (ifcGuid)
+                    reslove(ifcGuid.displayValue)
+                else
+                    reslove(undefined)
+     */
+    
+    
     //Only for sample, should use ExtensionLoadedEvent
     private async Task OnViewerInit(object? obj)
     {

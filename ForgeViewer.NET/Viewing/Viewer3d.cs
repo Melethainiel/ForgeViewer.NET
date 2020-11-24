@@ -92,6 +92,14 @@ namespace ForgeViewer.NET.Viewing
         {
             await JsViewer.InvokeVoidAsync("unloadExtension", extensionId);
         }
+
+        public async Task GetProperties(double id, Func<PropertyResult, Task> onSuccess )
+        {
+            var module = await ModuleTask.Value;
+            var result = await module.InvokeAsync<PropertyResult>("CallFunction", JsViewer, "getProperties", id);
+            await onSuccess(result);
+        }
+        
         public async Task AddEventListener(ViewerEvent viewerEvent, Func<object?, Task> action)
         {
             var eventName = viewerEvent.DescriptionAttr();
@@ -110,7 +118,7 @@ namespace ForgeViewer.NET.Viewing
             var type = obj.ToObject(responseType);
             await _eventAsyncDictionary[eventName].Invoke(type);
         }
-        
+
         #endregion
 
         #region private methods
