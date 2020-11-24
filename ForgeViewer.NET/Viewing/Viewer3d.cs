@@ -9,7 +9,6 @@ using ForgeViewer.NET.Models;
 using ForgeViewer.NET.Ui;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
-using Microsoft.JSInterop.Implementation;
 
 namespace ForgeViewer.NET.Viewing
 {
@@ -63,29 +62,21 @@ namespace ForgeViewer.NET.Viewing
             var module = await ModuleTask.Value;
             JsViewer = await module.InvokeAsync<IJSObjectReference>("Viewer3dInitializer", id);
         }
-
         public async Task Start()
         {
+            var module = await ModuleTask.Value;
+            var eventName = ViewerEvent.ToolbarCreatedEvent.DescriptionAttr();
+            await module.InvokeAsync<string>("AddViewEventListener", JsViewer, eventName,
+                DotNetObjectReference.Create(this));
+
             await JsViewer.InvokeVoidAsync("start");
         }
-
-        public async Task LoadParameter<T>(string parameterName)
-        {
-            var module = await ModuleTask.Value;
-            var reference =
-                await module.InvokeAsync<IJSObjectReference>("GetProperty", JsViewer, parameterName.ToLower());
-            var obj = typeof(T).GetMethod("Create", BindingFlags.Static | BindingFlags.Public)
-                ?.Invoke(null, new object?[] {reference});
-            GetType().GetProperty(parameterName)?.SetValue(this, obj);
-        }
-
-        public async Task<Model> LoadDocumentNode(Document document, BubbleNode manifestNode)
+        public async Task<Model> LoadDocumentNode(Document document, BubbleNode manifestNode, object? options = null)
         {
             var reference = await JsViewer.InvokeAsync<IJSObjectReference>("loadDocumentNode", document.JsDocument,
-                manifestNode.JsBubbleNode);
+                manifestNode.JsBubbleNode, options);
             return Model.Create(reference);
         }
-
         public async Task<Extension> GetExtensions(string extensionId, Func<Extension, Task> callback)
         {
             var reference = await JsViewer.InvokeAsync<IJSObjectReference>("getExtension", extensionId);
@@ -93,12 +84,22 @@ namespace ForgeViewer.NET.Viewing
             await callback.Invoke(extension);
             return extension;
         }
-
+        public async Task LoadExtension(string extensionId) //TODO Need to check promise
+        {
+            await JsViewer.InvokeVoidAsync("loadExtension", extensionId);
+        }
         public async Task UnloadExtension(string extensionId)
         {
             await JsViewer.InvokeVoidAsync("unloadExtension", extensionId);
         }
 
+        public async Task GetProperties(double id, Func<PropertyResult, Task> onSuccess )
+        {
+            var module = await ModuleTask.Value;
+            var result = await module.InvokeAsync<PropertyResult>("CallFunction", JsViewer, "getProperties", id);
+            await onSuccess(result);
+        }
+        
         public async Task AddEventListener(ViewerEvent viewerEvent, Func<object?, Task> action)
         {
             var eventName = viewerEvent.DescriptionAttr();
@@ -107,22 +108,34 @@ namespace ForgeViewer.NET.Viewing
             await module.InvokeAsync<string>("AddViewEventListener", JsViewer, eventName,
                 DotNetObjectReference.Create(this));
         }
-
-
         [JSInvokable]
         public async Task EventListener(string eventName, JsonElement? obj)
         {
             var viewerEvent = eventName.GetValueFromDescription<ViewerEvent>();
+            if (viewerEvent == ViewerEvent.ToolbarCreatedEvent)
+                await InitToolbarAsync();
             var responseType = viewerEvent.TypeAttr();
-
-            if (responseType is null)
-            {
-                await _eventAsyncDictionary[eventName].Invoke(null);
-                return;
-            }
-
             var type = obj.ToObject(responseType);
             await _eventAsyncDictionary[eventName].Invoke(type);
+        }
+
+        #endregion
+
+        #region private methods
+
+        private async Task InitToolbarAsync()
+        {
+            await LoadParameter<ToolBar>();
+        }
+        private async Task LoadParameter<T>()
+        {
+            var module = await ModuleTask.Value;
+            var parameterName = typeof(T).Name;
+            var reference =
+                await module.InvokeAsync<IJSObjectReference>("GetProperty", JsViewer, parameterName.ToLower());
+            var obj = typeof(T).GetMethod("Create", BindingFlags.Static | BindingFlags.Public)
+                ?.Invoke(null, new object?[] {reference});
+            GetType().GetProperty(parameterName)?.SetValue(this, obj);
         }
 
         #endregion
