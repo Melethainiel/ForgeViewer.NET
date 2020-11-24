@@ -3,6 +3,9 @@
 * This library is under construction and is for now closer to a POC than production.
 * You will need a Forge Application
 * There is a live demo [here](https://forge.my-toolkit.ovh/viewer)
+
+[![Build status](https://dev.azure.com/melethainielaerin/ForgeViewer.NET/_apis/build/status/ForgeViewer.NET%20-%20CI)](https://dev.azure.com/melethainielaerin/ForgeViewer.NET/_build/latest?definitionId=13)
+
 # How to install
 
 ### Add ForgeViewer.NET package :
