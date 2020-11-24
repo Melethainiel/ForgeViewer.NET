@@ -9,6 +9,8 @@ namespace ForgeViewer.NET.Viewing
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class Document
     {
+        #region Ctor
+
         public IJSObjectReference JsDocument { get; }
 
         private Document(IJSObjectReference jsObjectReference)
@@ -16,6 +18,9 @@ namespace ForgeViewer.NET.Viewing
             JsDocument = jsObjectReference;
         }
 
+        #endregion
+
+        #region Methods
 
         public static async Task Load(IServiceProvider serviceProvider, string urn,
             Func<Document, Task>? onSuccess = null, Func<string, Task>? onFailure = null)
@@ -42,5 +47,7 @@ namespace ForgeViewer.NET.Viewing
             var reference = await JsDocument.InvokeAsync<IJSObjectReference>("getRoot");
             return BubbleNode.Create(reference);
         }
+
+        #endregion
     }
 }
