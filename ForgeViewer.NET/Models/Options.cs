@@ -16,16 +16,16 @@ namespace ForgeViewer.NET.Models
         }
         
         [JsonPropertyName("env")]
-        public string Env { get; set; }
+        public string Env { get; init; }
         [JsonPropertyName("api")]
-        public string Api { get; set; }
+        public string Api { get; init; }
         [JsonPropertyName("accessToken")]
-        public string AccessToken { get; set; }
+        public string AccessToken { get; init; }
         [JsonPropertyName("language")]
-        public string Language { get; set; }
+        public string Language { get; init; }
 
         [JsonIgnore]
-        public Func<Task<string>>? GetAccessToken { get; set; }
+        public Func<Task<string>>? GetAccessToken { get; init; }
 
         [JsonPropertyName("getAccessToken")]
         public bool IsGetAccessToken => GetAccessToken is not null;

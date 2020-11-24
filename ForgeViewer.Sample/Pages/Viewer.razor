@@ -49,6 +49,7 @@
 
         var urn = "urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6cGJpLXZpZXdlci9NYXF1ZXR0ZSUyMEdPRSUyMHYwNGQuaWZj";
         await Document.Load(ServiceProvider, urn, OnSuccess);
+        await Document.Load(ServiceProvider, urn, OnSuccess);
     }
 
     private async Task OnExtLoaded(object? arg)
@@ -68,8 +69,12 @@
 
     private async Task OnSuccess(Document document)
     {
-        var getDefaultGeometry = await (await document.GetRoot()).GetDefaultGeometry();
-        var model = await GuiViewer3d.LoadDocumentNode(document, getDefaultGeometry);
+        var bubbleNode = await document.GetRoot();
+        var getDefaultGeometry = await bubbleNode.GetDefaultGeometry();
+        var model = await GuiViewer3d.LoadDocumentNode(document, getDefaultGeometry, new
+        {
+            keepCurrentModels = true
+        });
         var isPdf = await model.IsPdf();
         var is3d = await model.Is3d();
         
