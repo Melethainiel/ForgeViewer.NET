@@ -66,12 +66,18 @@ namespace ForgeViewer.NET.Viewing
 
         public async Task Start()
         {
+            var module = await ModuleTask.Value;
+            var eventName = ViewerEvent.ToolbarCreatedEvent.DescriptionAttr();
+            await module.InvokeAsync<string>("AddViewEventListener", JsViewer, eventName,
+                DotNetObjectReference.Create(this));
+
             await JsViewer.InvokeVoidAsync("start");
         }
 
-        public async Task LoadParameter<T>(string parameterName)
+        private async Task LoadParameter<T>()
         {
             var module = await ModuleTask.Value;
+            var parameterName = typeof(T).Name;
             var reference =
                 await module.InvokeAsync<IJSObjectReference>("GetProperty", JsViewer, parameterName.ToLower());
             var obj = typeof(T).GetMethod("Create", BindingFlags.Static | BindingFlags.Public)
@@ -113,16 +119,16 @@ namespace ForgeViewer.NET.Viewing
         public async Task EventListener(string eventName, JsonElement? obj)
         {
             var viewerEvent = eventName.GetValueFromDescription<ViewerEvent>();
+            if (viewerEvent == ViewerEvent.ToolbarCreatedEvent)
+                await InitToolbarAsync();
             var responseType = viewerEvent.TypeAttr();
-
-            if (responseType is null)
-            {
-                await _eventAsyncDictionary[eventName].Invoke(null);
-                return;
-            }
-
             var type = obj.ToObject(responseType);
             await _eventAsyncDictionary[eventName].Invoke(type);
+        }
+
+        private async Task InitToolbarAsync()
+        {
+            await LoadParameter<ToolBar>();
         }
 
         #endregion

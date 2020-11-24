@@ -41,7 +41,7 @@
     {
         GuiViewer3d = GuiViewer3d.Create(ServiceProvider);
         await GuiViewer3d.Initializer("demo");
-        // await GuiViewer3d.AddEventListener(ViewerEvent.GeometryLoadedEvent, OnViewerInit);
+        // await GuiViewer3d.AddEventListener(ViewerEvent.ToolbarCreatedEvent, OnViewerInit);
         await GuiViewer3d.AddEventListener(ViewerEvent.ExtensionLoadedEvent, OnExtLoaded);
         await GuiViewer3d.AddEventListener(ViewerEvent.SelectionChangedEvent, OnSelectionChanged);
 
@@ -85,9 +85,9 @@
         await Task.CompletedTask;
     }
 
+    //Only for sample, should use ExtensionLoadedEvent
     private async Task OnViewerInit(object? obj)
     {
-        await GuiViewer3d.LoadParameter<ToolBar>(nameof(ToolBar));
         var modelTools = await GuiViewer3d.ToolBar.GetControl<GroupControl>("modelTools");
         await modelTools.RemoveControl("toolbar-explodeTool");
 
