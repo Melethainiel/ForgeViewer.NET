@@ -4,19 +4,17 @@
 * You will need a Forge Application
 * There is a live demo [here](https://forge.my-toolkit.ovh/viewer)
 
-[![Build status](https://dev.azure.com/melethainielaerin/ForgeViewer.NET/_apis/build/status/ForgeViewer.NET%20-%20CI)](https://dev.azure.com/melethainielaerin/ForgeViewer.NET/_build/latest?definitionId=13)
 
 # How to install
 
 ### Add ForgeViewer.NET package :
-//Not yet published
 ```
 PM> Install-Package ForgeViewer.NET
 ```
 
 ### Add Forge Viewer dependencies :
-#### For Blazor Server
-Add in `_Host.cshtml` the following code :
+#### • Blazor Server
+In `Pages\_Host.cshtml`, add the following code :
 
 ```html
 <head>
@@ -25,9 +23,34 @@ Add in `_Host.cshtml` the following code :
     <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.js"></script>
 </head>
 ```
+In `wwwroot\css\site.css`, add the following code :
+```css
+.content {
+    ...
+    height: calc(100% - 120px);    
+}
+```
 
+#### • Blazor Web Assembly
+In `wwwroot\index.html`, add the following code :
+
+```html
+<head>
+    ...
+    <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.css" type="text/css"/>
+    <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.js"></script>
+</head>
+```
+In `wwwroot\css\app.css`, add the following code :
+```css
+.content {
+    ...
+    height: calc(100% - 120px);    
+}
+```
 # Example
 
+* General implementation to display a model
 ```c#
 protected override async Task OnAfterRenderAsync(bool firstRender)
 {
@@ -62,5 +85,23 @@ private async Task OnSuccess(Document document)
     var bubbleNode = await document.GetRoot();
     var getDefaultGeometry = await bubbleNode.GetDefaultGeometry();
     var model = await GuiViewer3d.LoadDocumentNode(document, getDefaultGeometry, null);    
+}
+```
+* Sample to unload an extension
+```c#
+private async Task OnExtLoaded(object? arg)
+{
+    var ext = new[] {"Autodesk.Explode"};
+    //All event response has a corresponding class 
+    if (arg is not ExtensionResponse extensionResponse || !ext.Contains(extensionResponse.ExtensionId))
+        return;
+
+
+    await GuiViewer3d.GetExtensions(extensionResponse.ExtensionId, Callback);
+}
+
+private async Task Callback(Extension extension)
+{
+    await extension.Unload();
 }
 ```

@@ -3,6 +3,11 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <Authors>Melethainiel Aerin</Authors>
+        <PackageProjectUrl>https://github.com/Melethainiel/ForgeViewer.NET</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Melethainiel/ForgeViewer.NET</RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
+        <Description>Bring the Forge Viewer JS library to c# using JSInterop and .Net 5</Description>
     </PropertyGroup>
 
 
@@ -11,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.1" />
     </ItemGroup>
 
 </Project>

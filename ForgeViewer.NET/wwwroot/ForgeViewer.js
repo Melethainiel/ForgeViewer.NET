@@ -10,6 +10,10 @@
         helper.invokeMethodAsync("InitializerCallback")
     });
 }
+export function ViewingShutdown() {
+    Autodesk.Viewing.shutdown();
+}
+
 
 export function Viewer3dInitializer(id) {
     return new Autodesk.Viewing.Viewer3D(document.getElementById(id));

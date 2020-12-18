@@ -1,13 +1,10 @@
 ﻿@page "/Viewer"
-@using ForgeViewer.Sample.ViewModels
 @using ForgeViewer.NET.Models
 @using System.Net.Http.Json
 @using ForgeViewer.NET.Ui
 @using ForgeViewer.NET.Viewing
 @using ForgeViewer.Sample.Data
 @using System.Globalization
-@using System.Text.Json
-@inject ViewerViewModel ViewModel
 @inject IServiceProvider ServiceProvider
 @inject IHttpClientFactory Factory
 <h3>Viewer</h3>
@@ -17,6 +14,7 @@
         <div id="demo" style="position: relative; height: calc(100% - 120px); width: calc(100% - 0px);">
         </div>
         <p>Current selection : @_currentSelection</p>
+        <button class="btn btn-primary" @onclick="OnShutdown">Shutdown</button>
     </div>
 </div>
 
@@ -109,24 +107,7 @@
             }
         });
     }
-    
-    /*
-     *let ind = this._validSelection.findIndex(i => i.toLocaleLowerCase() == type.displayValue.toLocaleLowerCase());
-                if (ind == -1) {
-                    let parent = t.properties.find(p => p.attributeName == 'parent')
-                    if (parent)
-                        reslove(this.getIfcGuid(parent.displayValue))
-                    else
-                        reslove(undefined)
-                }
-                let ifcGuid = t.properties.find(p => p.attributeName == 'LcIFCProperty:IFCString' && p.displayCategory == 'IFC' && p.displayName == 'GLOBALID')
-                if (ifcGuid)
-                    reslove(ifcGuid.displayValue)
-                else
-                    reslove(undefined)
-     */
-    
-    
+
     //Only for sample, should use ExtensionLoadedEvent
     private async Task OnViewerInit(object? obj)
     {
@@ -152,6 +133,11 @@
         };
         return options;
     }
-
+    
+    private async Task OnShutdown()
+    {
+        await GuiViewer3d.Uninitialize();
+        await Viewing.Shutdown();
+    }
 
 }

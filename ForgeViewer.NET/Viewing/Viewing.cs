@@ -8,9 +8,15 @@ namespace ForgeViewer.NET.Viewing
 {
     public class Viewing
     {
+        #region Properties
+
         private Lazy<Task<IJSObjectReference>> ModuleTask { get; }
         private Func<Task<string>>? _getAccessToken;
         private Func<Task>? _callBack;
+
+        #endregion
+
+        #region Ctor
 
         public static Viewing Create(IServiceProvider serviceProvider)
         {
@@ -25,6 +31,9 @@ namespace ForgeViewer.NET.Viewing
         }
 
 
+        #endregion
+
+
         public async Task Initializer(Options? options, Func<Task> callback)
         {
             _callBack = callback;
@@ -35,6 +44,12 @@ namespace ForgeViewer.NET.Viewing
 
             var module = await ModuleTask.Value;
             await module.InvokeVoidAsync("ViewingInitializer", options, DotNetObjectReference.Create(this));
+        }
+
+        public async Task Shutdown()
+        {
+            var module = await ModuleTask.Value;
+            await module.InvokeVoidAsync("ViewingShutdown");
         }
 
         [JSInvokable]
