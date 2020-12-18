@@ -3,6 +3,10 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <Authors>Melethainiel Aerin</Authors>
+        <PackageProjectUrl>https://github.com/Melethainiel/ForgeViewer.NET</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Melethainiel/ForgeViewer.NET</RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
     </PropertyGroup>
 
 
