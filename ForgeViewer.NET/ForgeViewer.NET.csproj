@@ -7,6 +7,7 @@
         <PackageProjectUrl>https://github.com/Melethainiel/ForgeViewer.NET</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Melethainiel/ForgeViewer.NET</RepositoryUrl>
         <RepositoryType>Git</RepositoryType>
+        <Description>Bring the Forge Viewer JS library to c# using JSInterop and .Net 5</Description>
     </PropertyGroup>
 
 
