@@ -62,6 +62,10 @@ namespace ForgeViewer.NET.Viewing
             var module = await ModuleTask.Value;
             JsViewer = await module.InvokeAsync<IJSObjectReference>("Viewer3dInitializer", id);
         }
+        public async Task Uninitialize()
+        {
+            await JsViewer.InvokeVoidAsync("uninitialize");
+        }
         public async Task Start()
         {
             var module = await ModuleTask.Value;
